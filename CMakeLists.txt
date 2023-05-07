@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.4 FATAL_ERROR)
-project(git_tutorial)
+
+
+project(POSIX_state_machine)
 
 
 set(CMAKE_BUILD_TYPE Debug)
@@ -10,8 +12,16 @@ include_directories(lib)
 
 file(GLOB SOURCES "src/*.c")
 
-add_executable(foo ${SOURCES})
 
-file(GLOB ESPL_LIB_SRCS "lib/*.c")
-add_library(ESPL_LIB ${ESPL_LIB_SRCS})
-target_link_libraries(foo ESPL_LIB)
+
+
+add_executable(state_machine ${SOURCES})
+
+file(GLOB STATES_LIB_SRCS "lib/*.c")
+add_library(STATES_LIB STATIC ${STATES_LIB_SRCS})
+target_link_libraries(state_machine STATES_LIB)
+
+if(UNIX AND NOT APPLE)
+    target_link_libraries(state_machine rt)
+endif()
+
