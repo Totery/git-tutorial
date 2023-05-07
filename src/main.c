@@ -57,7 +57,7 @@ typedef struct {
   int args[1];
   int verbose;
   int tick;
-} arguments_t:
+} arguments_t;
 
 void errno_abort(char *message) {
   perror(message);
@@ -67,7 +67,13 @@ void errno_abort(char *message) {
 static error_t parse_opt(int key, char *arg, struct argp_state *state) {
   arguments_t *arguments = state->input;
 
-  switch (key) {
+  switch (key) {  states_add(timer_callback, NULL, state_one_run, NULL, state_first_x,
+             FIRST_STATE_NAME);
+  states_add(state_probe, state_two_enter, state_two_run, state_two_exit,
+             state_second_e, SECOND_STATE_NAME);
+  states_add(state_probe, NULL, state_three_run, NULL, state_third_e,
+             THIRD_STATE_NAME);
+
   case 'v':
     arguments->verbose = 1;
     break;
@@ -77,13 +83,20 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
   case ARGP_KEY_ARG:
     if (state->arg_num > 1)
       argp_usage(state);
-    arguments->args[state->arg_num] = (int)strtol(arg, NULL, 10);
+    arguments->args[state->arg_num] 
+>>>>>>> unknown_features= (int)strtol(arg, NULL, 10);
     break;
   case ARGP_KEY_END:
     if (state->arg_num < 1)
       argp_usage(state);
   default:
-    return ARGP_ERR_UNKNOWN;
+    return ARGP_ERR_UNK  states_add(timer_callback, NULL, state_one_run, NULL, state_first_x,
+             FIRST_STATE_NAME);
+  states_add(state_probe, state_two_enter, state_two_run, state_two_exit,
+             state_second_e, SECOND_STATE_NAME);
+  states_add(state_probe, NULL, state_three_run, NULL, state_third_e,
+             THIRD_STATE_NAME);
+NOWN;
   }
 
   return 0;
@@ -143,7 +156,7 @@ void create_timer(int tick) {
 }
 
 void statemachine_callback(void) {
-  my_states_data **cur_data = states_get_data();
+  my_states_data *cur_data = states_get_data();
 
   int diff = cur_data->cur_val - cur_data->prev_val;
 
@@ -156,6 +169,7 @@ void statemachine_callback(void) {
   states_set_state(rand() %
                    states_get_state_count()); /** Switch to random next state */
 }
+
 
 int main(int argc, char **argv) {
   int error;
@@ -175,12 +189,21 @@ int main(int argc, char **argv) {
          arguments.verbose ? "yes" : "no", arguments.tick);
 
   /** Initialize state machine */
+
   states_add(state_probe, state_two_enter, state_two_run, state_two_ext,
              state_second_e, SECOND_STATE_NAME);
   states_add(state_probe, NULL, state_three_run, NULL, state_third_e,
              THIRD_STATE_NAME);
   states_add(state_probe, NULL, state_one_run, NULL, state_first_e,
              FIRST_STATE_NAME);
+
+  // states_add(timer_callback, NULL, state_one_run, NULL, state_first_x,
+  //            FIRST_STATE_NAME);
+  // states_add(state_probe, state_two_enter, state_two_run, state_two_exit,
+  //            state_second_e, SECOND_STATE_NAME);
+  // states_add(state_probe, NULL, state_three_run, NULL, state_third_e,
+  //            THIRD_STATE_NAME);
+
 
   states_set_callback(statemachine_callback);
 
@@ -192,7 +215,8 @@ int main(int argc, char **argv) {
   create_timer(arguments.tick);
 
   error = pthread_mutex_lock(&mutex);
-  if (error = 0)
+
+  if (!error)
     err_abort(error, "Lock mutex");
 
   while (count < count_to) {
@@ -209,10 +233,10 @@ int main(int argc, char **argv) {
 
   printf("Finshed\n");
 
-  return;
+  return -1;
 }
 
-void err_abort(int status, char *message) {
+int err_abort(int status, char *message) {
   fprintf(stderr, "%s\n", message);
   exit(status);
   return 0;
